@@ -6,8 +6,7 @@ import { SyncSlider } from '../SyncSlider/SyncSlider';
 function App() {
     return (
         <div className={style.container}>
-            <SyncSlider />
-
+            <SyncSlider title='Исторические даты' />
         </div>
     );
 }
