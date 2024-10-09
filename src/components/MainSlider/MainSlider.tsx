@@ -6,14 +6,16 @@ import { useEffect, useState } from 'react';
 
 interface MainSliderProps {
     distributedData: DateItem[][];
-
+    activeSlide: number;
+    setActiveSlide: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export const MainSlider = (props: MainSliderProps) => {
 
-    const [activeSlide, setActiveSlide] = useState(1);
     const [firstDate, setFirstDate] = useState('');
     const [secondDate, setSecondDate] = useState('');
+
+    const {activeSlide, setActiveSlide } = props;
 
 
     useEffect(() => {

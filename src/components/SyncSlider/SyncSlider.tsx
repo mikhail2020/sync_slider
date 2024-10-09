@@ -15,14 +15,21 @@ interface SyncSliderProps {
 
 export const SyncSlider = (props: SyncSliderProps) => {
 
+    const [activeSlide, setActiveSlide] = useState(1);
     const distributedData = useDistributedData(props.data, props.timePeriods);
+    const dateInPeriod = useDatesForPeriod(activeSlide, distributedData);
 
+    
     return (
         <div className={style.wrapper} >
             <div className={style.grid}>
                 <SliderTitle title={props.title} />
-                <MainSlider distributedData={distributedData} />
-                <SecondarySlider />
+                <MainSlider
+                    distributedData={distributedData}
+                    activeSlide={activeSlide}
+                    setActiveSlide={setActiveSlide}
+                />
+                <SecondarySlider dateInPeriod={dateInPeriod} />
             </div>
         </div>
     );
@@ -72,4 +79,17 @@ const timePeriodMapping: Record<string, number> = {
     five: 5,
     six: 6
 };
+
+
+const useDatesForPeriod = (activeSlide: number, distributedData: DateItem[][]) => {
+    const [dateInPeriod, setDateInPeriod] = useState<DateItem[]>([]);
+
+    useEffect(() => {
+        setDateInPeriod(() => distributedData[activeSlide - 1]);
+    }, [activeSlide, distributedData])
+
+    return dateInPeriod;
+}
+
+
 
