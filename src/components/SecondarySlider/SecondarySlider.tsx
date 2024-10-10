@@ -29,7 +29,6 @@ export const SecondarySlider = (props: SecondarySliderProps) => {
         return props.dateInPeriod.length;
     }, [props.dateInPeriod.length])
 
-    console.log(currentIndex)
 
     return (
         <div className={style.wrapper} >

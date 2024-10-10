@@ -54,6 +54,7 @@ function App() {
                 data={historicalDates}
                 timePeriods='six'
             />
+                        
         </div>
     );
 }
