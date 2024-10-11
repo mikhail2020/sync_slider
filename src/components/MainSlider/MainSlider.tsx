@@ -1,7 +1,7 @@
 import style from './MainSlider.module.sass';
 import prev from '../../assets/icons/prev.svg';
 import next from '../../assets/icons/next.svg';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import gsap from 'gsap';
 
 
@@ -12,11 +12,13 @@ interface MainSliderProps {
 }
 
 export const MainSlider = (props: MainSliderProps) => {
+
     const [firstDate, setFirstDate] = useState('');
     const [secondDate, setSecondDate] = useState('');
     const { activeSlide, setActiveSlide } = props;
     const totalDots = props.distributedData.length
     const degBetweenDots = getHowManyDegBetweenDots(totalDots);
+    const [showLabel, setShowLabel] = useState(false);
 
     // Состояние для текущего угла поворота
     const [rotation, setRotation] = useState(0);
@@ -33,7 +35,29 @@ export const MainSlider = (props: MainSliderProps) => {
             }
         }
         getSelectDate();
+
+        setShowLabel(false);
+        const timer = setTimeout(() => {
+            setShowLabel(true);
+        }, 500);
+
+        return () => {
+            clearTimeout(timer)
+        };
     }, [activeSlide, props.distributedData]);
+
+
+    gsap.to('.selectPeriod', {
+        scale: 8,
+        backgroundColor: "#F4F5F9",
+    });
+
+    gsap.to('.notSelectPeriod', {
+        scale: 1, // Возвращение к исходному размеру
+        backgroundColor: "#303E5880", // Исходный цвет фона
+    });
+
+
 
     // Анимация счетчика
     useEffect(() => {
@@ -56,39 +80,16 @@ export const MainSlider = (props: MainSliderProps) => {
 
     function prevPeriod() {
         setActiveSlide(oldState => oldState - 1);
-        const rotate = rotation - degBetweenDots;
+        const rotate = rotation + degBetweenDots;
         setRotation(rotate);
-
-
-        gsap.to(`.${style.circle}`, {
-            rotation: rotate,
-            duration: 1,
-            ease: "power1.inOut"
-        });
-        gsap.to(`.${style.circleButton}`, {
-            rotation: -rotate,
-            duration: 0.5,
-            ease: "power1.inOut"
-        });
+        rotationOneStep(rotate);
     }
 
     function nextPeriod() {
         setActiveSlide(oldState => oldState + 1);
-        const rotate = rotation + degBetweenDots;
+        const rotate = rotation - degBetweenDots;
         setRotation(rotate);
-  
-        
-        gsap.to(`.${style.circle}`, {
-            rotation: rotate,
-            duration: 1,
-            ease: "power1.inOut"
-        });
-
-        gsap.to(`.${style.circleButton}`, {
-            rotation: -rotate,
-            duration: 0.5,
-            ease: "power1.inOut"
-        });
+        rotationOneStep(rotate);
     }
 
     // Функция для анимации кнопки при наведении
@@ -108,7 +109,6 @@ export const MainSlider = (props: MainSliderProps) => {
             duration: 0.3,
         });
     };
-
 
     // Функция для обработки клика по кнопке(на "Каруселе")
     const handleClick = (index: number) => {
@@ -136,42 +136,48 @@ export const MainSlider = (props: MainSliderProps) => {
             duration: 0.5,
             ease: "power1.inOut"
         });
-
     };
 
 
     return (
         <div className={style.wrapper}>
+
+            {showLabel && (
+                <div className={`${style.label_selectPeriod} ${showLabel ? style.show : ''}`}>
+                    {getThemeSelectPeriod(activeSlide, props.distributedData)}
+                </div>
+            )}
+
             <div className={style.circle}>
                 {
                     props.distributedData.map((el, index) => {
                         const angle = (index * degBetweenDots) - START_POSITION; // Угол для текущего элемента
-
                         const radius = 265; // Радиус большого круга
+                        
                         // Вычисляем начальные координаты
                         const x = (radius * Math.cos(angle * (Math.PI / 180)));
                         const y = radius * Math.sin(angle * (Math.PI / 180));
 
                         return (
-                            <div
-                                key={index}
-                                className={style.circleButton}
-                                style={{
-                                    transform: `translate(${x}px, ${y}px)`
-                                }}
-                                onMouseEnter={handleMouseEnter}
-                                onMouseLeave={handleMouseLeave}
-                                onClick={() => handleClick(index)}
-                            >
-                                <span
-                                    style={{
-                                        transition: 'transform 0.5s ease-in-out',
-                                        transform: `rotate(-${rotation}deg)`,
-                                    }}
+                            <>
+                                <div
+                                    key={index}
+                                    className={`${style.circleButton} ${activeSlide - 1 === index ? "selectPeriod" : "notSelectPeriod"}`}
+                                    style={{ transform: `translate(${x}px, ${y}px)` }}
+                                    onMouseEnter={handleMouseEnter}
+                                    onMouseLeave={handleMouseLeave}
+                                    onClick={() => handleClick(index)}
                                 >
-                                    {index + 1}
-                                </span>
-                            </div>
+                                    <span
+                                        style={{
+                                            transition: 'transform 0.5s ease-in-out',
+                                            transform: `rotate(-${rotation}deg)`,
+                                        }}
+                                    >
+                                        {index + 1}
+                                    </span>
+                                </div>
+                            </>
                         )
                     })
                 }
@@ -183,7 +189,6 @@ export const MainSlider = (props: MainSliderProps) => {
 
             <div className={style.navigationPanel}>
                 <div className={style.pageIndicator}>{activeSlide}/{totalDots}</div>
-
                 <div className={style.navigationControls}>
                     <button className={style.button} onClick={prevPeriod} disabled={activeSlide < 2}>
                         <img src={prev} alt="Предыдущий период" />
@@ -194,9 +199,10 @@ export const MainSlider = (props: MainSliderProps) => {
                 </div>
             </div>
 
-        </div>
+        </div >
     );
 };
+
 /**Функция вычисляет сколько градусов между точками */
 function getHowManyDegBetweenDots(timePeriods: number) {
     switch (timePeriods) {
@@ -213,4 +219,30 @@ function getHowManyDegBetweenDots(timePeriods: number) {
         default:
             return 0;
     }
+}
+/**Функция возвращает тему выбранного периода, если у всех событий одинаковая тема */
+function getThemeSelectPeriod(selectPeriod: number, allPeriod: DateItem[][]) {
+
+    const selectPerodArr = allPeriod[selectPeriod - 1];
+
+    const firstTheme = selectPerodArr.length && selectPerodArr[0].theme;
+
+    const allMatch = selectPerodArr.every(event => event.theme === firstTheme);
+
+    return allMatch ? firstTheme : "";
+
+}
+
+/**Функция вращает "Карусель" на один шаг */
+function rotationOneStep(rotate: number) {
+    gsap.to(`.${style.circle}`, {
+        rotation: rotate,
+        duration: 1,
+        ease: "power1.inOut"
+    });
+    gsap.to(`.${style.circleButton}`, {
+        rotation: -rotate,
+        duration: 0.5,
+        ease: "power1.inOut"
+    });
 }

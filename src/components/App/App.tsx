@@ -46,7 +46,6 @@ const historicalDates: DateItem[] = [
 ]
 
 
-
 function App() {
     return (
         <div className={style.container}>
