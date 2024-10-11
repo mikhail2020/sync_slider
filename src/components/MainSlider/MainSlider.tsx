@@ -1,7 +1,7 @@
 import style from './MainSlider.module.sass';
 import prev from '../../assets/icons/prev.svg';
 import next from '../../assets/icons/next.svg';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 
 
@@ -35,12 +35,60 @@ export const MainSlider = (props: MainSliderProps) => {
         getSelectDate();
     }, [activeSlide, props.distributedData]);
 
+    // Анимация счетчика
+    useEffect(() => {
+        if (firstDate && secondDate) {
+            gsap.to(`.${style.firstDate}`, {
+                innerText: firstDate,
+                duration: 2,
+                ease: "power1.out",
+                snap: { innerText: 1 }
+            });
+            gsap.to(`.${style.secondDate}`, {
+                innerText: secondDate,
+                duration: 2,
+                ease: "power1.out",
+                snap: { innerText: 1 }
+            });
+        }
+    }, [firstDate, secondDate]);
+
+
     function prevPeriod() {
         setActiveSlide(oldState => oldState - 1);
+        const rotate = rotation - degBetweenDots;
+        setRotation(rotate);
+
+
+        gsap.to(`.${style.circle}`, {
+            rotation: rotate,
+            duration: 1,
+            ease: "power1.inOut"
+        });
+        gsap.to(`.${style.circleButton}`, {
+            rotation: -rotate,
+            duration: 0.5,
+            ease: "power1.inOut"
+        });
     }
 
     function nextPeriod() {
         setActiveSlide(oldState => oldState + 1);
+        const rotate = rotation + degBetweenDots;
+        setRotation(rotate);
+  
+        
+        gsap.to(`.${style.circle}`, {
+            rotation: rotate,
+            duration: 1,
+            ease: "power1.inOut"
+        });
+
+        gsap.to(`.${style.circleButton}`, {
+            rotation: -rotate,
+            duration: 0.5,
+            ease: "power1.inOut"
+        });
     }
 
     // Функция для анимации кнопки при наведении
@@ -62,9 +110,7 @@ export const MainSlider = (props: MainSliderProps) => {
     };
 
 
-
-
-    // Функция для обработки клика по кнопке
+    // Функция для обработки клика по кнопке(на "Каруселе")
     const handleClick = (index: number) => {
 
         const newActiveSlide = index + 1;
@@ -93,13 +139,13 @@ export const MainSlider = (props: MainSliderProps) => {
 
     };
 
+
     return (
         <div className={style.wrapper}>
             <div className={style.circle}>
                 {
                     props.distributedData.map((el, index) => {
                         const angle = (index * degBetweenDots) - START_POSITION; // Угол для текущего элемента
-
 
                         const radius = 265; // Радиус большого круга
                         // Вычисляем начальные координаты

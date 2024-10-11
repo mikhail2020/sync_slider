@@ -1,5 +1,6 @@
 import React from 'react';
 import style from './App.module.sass';
+import gsap from 'gsap';
 
 import { SyncSlider } from '../SyncSlider/SyncSlider';
 
@@ -54,7 +55,6 @@ function App() {
                 data={historicalDates}
                 timePeriods='six'
             />
-                        
         </div>
     );
 }
