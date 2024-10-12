@@ -5,7 +5,7 @@ import { SliderTitle } from './SliderTitle/SliderTitle';
 import style from './SyncSliderDesctop.module.sass';
 
 
-interface SyncSliderDesctopProps {
+export interface SyncSliderProps {
     title?: string;
     data: DateItem[];
     timePeriods: 'two' | 'three' | 'four' | 'five' | 'six';
@@ -13,7 +13,7 @@ interface SyncSliderDesctopProps {
 
 
 
-export const SyncSliderDesctop = (props: SyncSliderDesctopProps) => {
+export const SyncSliderDesctop = (props: SyncSliderProps) => {
 
     const [activeSlide, setActiveSlide] = useState(1);
     const distributedData = useDistributedData(props.data, props.timePeriods);
@@ -37,7 +37,7 @@ export const SyncSliderDesctop = (props: SyncSliderDesctopProps) => {
 
 
 /**хук распределяет даты по периодам*/
-const useDistributedData = (data: DateItem[], timePeriods: 'two' | 'three' | 'four' | 'five' | 'six') => {
+export const useDistributedData = (data: DateItem[], timePeriods: 'two' | 'three' | 'four' | 'five' | 'six') => {
     const [distributedData, setDistributedData] = useState<DateItem[][]>([[]]);
 
     useEffect(() => {
@@ -81,7 +81,7 @@ const timePeriodMapping: Record<string, number> = {
 };
 
 
-const useDatesForPeriod = (activeSlide: number, distributedData: DateItem[][]) => {
+export const useDatesForPeriod = (activeSlide: number, distributedData: DateItem[][]) => {
     const [dateInPeriod, setDateInPeriod] = useState<DateItem[]>([]);
 
     useEffect(() => {

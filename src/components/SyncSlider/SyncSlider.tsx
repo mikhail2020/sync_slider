@@ -16,11 +16,24 @@ interface SyncSliderProps {
 
 
 export const SyncSlider = (props: SyncSliderProps) => {
-    const [isMobile, setIsMobile] = useState(window.innerWidth <= 320);
 
-    const handleResize = () => {
-        setIsMobile(window.innerWidth <= 320);
-    };
+    const { isMobile } = useIsMobile();
+
+    return (
+        <>
+            {isMobile ?
+                <SyncSliderMobile data={props.data} timePeriods={'six'} title={props.title} /> :
+                <SyncSliderDesctop data={props.data} timePeriods={'six'} title={props.title} />
+            }
+
+        </>
+    );
+};
+
+
+
+function useIsMobile() {
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 320);
 
     useEffect(() => {
         window.addEventListener('resize', handleResize);
@@ -30,16 +43,13 @@ export const SyncSlider = (props: SyncSliderProps) => {
         };
     }, []);
 
-    return (
-        <>
-            {isMobile ?
-                <SyncSliderMobile/>:
-                <SyncSliderDesctop data={props.data} timePeriods={'six'} title={props.title} />
-            }
+    const handleResize = () => {
+        setIsMobile(window.innerWidth <= 320);
+    };
 
-        </>
-    );
-};
+    return { isMobile }
+
+}
 
 
 

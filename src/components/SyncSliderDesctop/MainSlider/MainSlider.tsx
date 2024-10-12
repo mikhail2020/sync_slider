@@ -13,8 +13,7 @@ interface MainSliderProps {
 
 export const MainSlider = (props: MainSliderProps) => {
 
-    const [firstDate, setFirstDate] = useState('');
-    const [secondDate, setSecondDate] = useState('');
+
     const { activeSlide, setActiveSlide } = props;
     const totalDots = props.distributedData.length
     const degBetweenDots = getHowManyDegBetweenDots(totalDots);
@@ -22,22 +21,15 @@ export const MainSlider = (props: MainSliderProps) => {
     // Состояние для текущего угла поворота
     const [rotation, setRotation] = useState(0);
     const START_POSITION = 60;
-    const mainSliderRef = useRef<HTMLDivElement | null>(null)
+    const mainSliderRef = useRef<HTMLDivElement | null>(null);
+
+    const { firstDate, secondDate } = useDateSelectPeriod(activeSlide, props.distributedData);
 
     const { focusSelectPeriod, rotationOneStep, handleMouseEnter, handleMouseLeave, rotationContainer,
         rotationButton } = useGsapAnimations(firstDate, secondDate, mainSliderRef.current);
 
 
     useEffect(() => {
-
-        const selectPeriod = props.distributedData[activeSlide - 1];
-
-        if (props.distributedData[0].length) {
-            setFirstDate(selectPeriod[0].year);
-            setSecondDate(selectPeriod[selectPeriod.length - 1].year);
-        }
-
-
         setShowLabel(false);
         const timer = setTimeout(() => {
             setShowLabel(true);
@@ -107,32 +99,30 @@ export const MainSlider = (props: MainSliderProps) => {
                         const y = radius * Math.sin(angle * (Math.PI / 180));
 
                         return (
-                            <>
-                                <div
-                                    key={index}
-                                    className={`${style.circleButton} ${activeSlide - 1 === index ? "selectPeriod" : "notSelectPeriod"}`}
-                                    style={{ transform: `translate(${x}px, ${y}px)` }}
-                                    onMouseEnter={handleMouseEnter}
-                                    onMouseLeave={handleMouseLeave}
-                                    onClick={() => handleClick(index)}
+                            <div
+                                key={index}
+                                className={`${style.circleButton} ${activeSlide - 1 === index ? "selectPeriod" : "notSelectPeriod"}`}
+                                style={{ transform: `translate(${x}px, ${y}px)` }}
+                                onMouseEnter={handleMouseEnter}
+                                onMouseLeave={handleMouseLeave}
+                                onClick={() => handleClick(index)}
+                            >
+                                <span
+                                    style={{
+                                        transition: 'transform 0.5s ease-in-out',
+                                        transform: `rotate(-${rotation}deg)`,
+                                    }}
                                 >
-                                    <span
-                                        style={{
-                                            transition: 'transform 0.5s ease-in-out',
-                                            transform: `rotate(-${rotation}deg)`,
-                                        }}
-                                    >
-                                        {index + 1}
-                                    </span>
-                                </div>
-                            </>
+                                    {index + 1}
+                                </span>
+                            </div>
                         )
                     })
                 }
             </div>
             <div className={style.period}>
-                <div className={style.firstDate}>{firstDate}</div>
-                <div className={style.secondDate}>{secondDate}</div>
+                <div id="firstDate" className={style.firstDate}>{firstDate}</div>
+                <div id="secondDate" className={style.secondDate}>{secondDate}</div>
             </div>
 
             <div className={style.navigationPanel}>
@@ -151,18 +141,18 @@ export const MainSlider = (props: MainSliderProps) => {
     );
 };
 
-function useGsapAnimations(firstDate: string, secondDate: string, mainSliderRef: HTMLDivElement | null) {
+export function useGsapAnimations(firstDate: string, secondDate: string, mainSliderRef: HTMLDivElement | null) {
 
     useEffect(() => {
         if (firstDate && secondDate) {
             gsap.context(() => {
-                gsap.to(`.${style.firstDate}`, {
+                gsap.to("#firstDate", {
                     innerText: firstDate,
                     duration: 2,
                     ease: "power1.out",
                     snap: { innerText: 1 }
                 });
-                gsap.to(`.${style.secondDate}`, {
+                gsap.to("#secondDate", {
                     innerText: secondDate,
                     duration: 2,
                     ease: "power1.out",
@@ -170,7 +160,7 @@ function useGsapAnimations(firstDate: string, secondDate: string, mainSliderRef:
                 });
             }, mainSliderRef ? mainSliderRef : undefined)
         }
-    }, [firstDate, secondDate]);
+    }, [firstDate, mainSliderRef, secondDate]);
 
 
     /**Фокус на выбранном элементе*/
@@ -276,6 +266,25 @@ function getThemeSelectPeriod(selectPeriod: number, allPeriod: DateItem[][]) {
     const allMatch = selectPerodArr.every(event => event.theme === firstTheme);
 
     return allMatch ? firstTheme : "";
+
+}
+
+export function useDateSelectPeriod(activeSlide: number, distributedData: DateItem[][]) {
+    const [firstDate, setFirstDate] = useState('');
+    const [secondDate, setSecondDate] = useState('');
+
+    useEffect(() => {
+
+        const selectPeriod = distributedData[activeSlide - 1];
+
+        if (distributedData[0].length) {
+            setFirstDate(selectPeriod[0].year);
+            setSecondDate(selectPeriod[selectPeriod.length - 1].year);
+        }
+
+    }, [activeSlide, distributedData]);
+
+    return { firstDate, secondDate }
 
 }
 
