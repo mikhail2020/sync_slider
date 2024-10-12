@@ -1,6 +1,6 @@
 import style from './MainSlider.module.sass';
-import prev from '../../assets/icons/prev.svg';
-import next from '../../assets/icons/next.svg';
+import prev from '../../../assets/icons/prev.svg';
+import next from '../../../assets/icons/next.svg';
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 

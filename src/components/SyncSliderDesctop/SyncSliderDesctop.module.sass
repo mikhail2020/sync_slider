@@ -1,0 +1,36 @@
+.wrapper
+    background-color: #F4F5F9
+    width: 1920px
+    height: 1080px
+    margin-bottom: 15px
+    overflow: hidden
+
+.grid
+    position: relative
+    left: 320px
+    border-left: 1px solid #42567A
+    border-right: 1px solid #42567A
+    width: 1440px
+    height: 1080px
+    overflow: hidden
+
+
+    &::before
+        content: ""
+        position: absolute
+        top: 50%
+        left: 0
+        right: 0
+        height: 1px
+        background-color: #42567A
+        transform: translateY(-50%)
+
+    &::after
+        content: ""
+        position: absolute
+        top: 0
+        left: 50%
+        width: 1px
+        height: 100%
+        background-color: #42567A
+        transform: translateX(-50%)

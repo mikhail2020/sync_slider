@@ -1,7 +1,7 @@
 import { SecondarySliderItem } from '../SecondarySliderItem/SecondarySliderItem';
 import style from './SecondarySlider.module.sass';
-import prev from '../../assets/icons/secondPrev.svg';
-import next from '../../assets/icons/secondNext.svg';
+import prev from '../../../assets/icons/secondPrev.svg';
+import next from '../../../assets/icons/secondNext.svg';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Swiper as SwiperType } from 'swiper';
 import 'swiper/css';
