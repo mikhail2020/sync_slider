@@ -1,10 +1,10 @@
 Этот проект представляет собой слайдер, разработанный с использованием React, TypeScript, SASS, GSAP, Swiper.
 
 ## Описание
-Основной компанент SyncSlider
-принимает следубщие свойства:
+Основной компанент SyncSlider принимает следубщие свойства:
 
-```interface SyncSliderProps {
+```typescript
+interface SyncSliderProps {
     title?: string;
     data: DateItem[];
     timePeriods: 'two' | 'three' | 'four' | 'five' | 'six';
@@ -14,7 +14,7 @@ type DateItem = {
     year: string;
     event: string;
     theme?: string;
-};```
+};
 
 title - заголовок (Не обязательное свойство).
 data - масив с данными для отображения (тип данный DateItem) 
