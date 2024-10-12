@@ -4,6 +4,7 @@ import { SecondarySlider } from '../SyncSliderDesctop/SecondarySlider/SecondaryS
 import { SliderTitle } from '../SyncSliderDesctop/SliderTitle/SliderTitle';
 import style from './SyncSlider.module.sass';
 import { SyncSliderDesctop } from '../SyncSliderDesctop/SyncSliderDesctop';
+import { SyncSliderMobile } from '../SyncSliderMobile/SyncSliderMobile';
 
 
 interface SyncSliderProps {
@@ -32,7 +33,7 @@ export const SyncSlider = (props: SyncSliderProps) => {
     return (
         <>
             {isMobile ?
-                <></> :
+                <SyncSliderMobile/>:
                 <SyncSliderDesctop data={props.data} timePeriods={'six'} title={props.title} />
             }
 
